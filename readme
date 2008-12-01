@@ -1,0 +1,178 @@
+
+YAMI - YET ANOTHER MOUSE INTERFACE
+==================================
+
+YAMI is a mouse interface that enables serial PC mice to be used on AMIGA
+or ATARI ST computers.
+
+YAMI is released under GPL v3.
+
+For further information see:  http://yami.shredzone.org
+
+
+ASSEMBLING THE HARDWARE
+=======================
+
+YAMI is easy assembled if you know how to read schematics and use a soldering
+iron. You will find the schematic diagram and part list in the "schematics"
+directory.
+
+If you use an Atari ST, or if you won't use the mouse wheel on your Amiga,
+you can spare the connector named "JOY", which saves you some tedious wiring.
+
+The YAMI hardware does some voltage tricks. Please make sure that you build
+the YAMI hardware EXACTLY after the schematics. If you fail to do so, and if
+you're lucky you will only damage your mouse and your YAMI hardware. With bad
+luck you will also destroy your Amiga or Atari vintage computer, though, so be
+extra careful, and check everything at least twice and once again before you
+connect YAMI for the first time.
+
+NOTE that YAMI is only designed for serial PC mice. These mice are also very
+hard to find nowadays. Some PS/2 mice can be used on a serial line with a PS/2
+to serial adapter. If you are using a PS/2 mouse, make sure that your mouse
+does actually support such an adapter!
+
+Modern mice only support USB (and maybe PS/2 with an adapter). Sadly, you
+cannot use those ones with YAMI. Don't even think about connecting a USB mouse
+to a PS/2 adapter, and the PS/2 adapter to a serial adapter. You will most
+likely destroy your mouse that way.
+
+NEVER NEVER EVER connect an Amiga or Atari mouse to YAMI. You will brick that
+mouse if you do so. Also do not connect Amiga or Atari joysticks to YAMI, and
+do not connect other serial devices to YAMI. In other words: ONLY connect a
+serial or PS/2 mouse to YAMI.
+
+Actually, a YAMI2 was planned, which was designed to support USB mice. Anyhow
+handling USB data traffic requires more sophisticated hardware and software,
+and the dying Amiga platform wasn't much promising for an acceptable return
+of investments in development time.
+
+
+FLASHING YAMI INTO THE PIC PROCESSOR
+====================================
+
+In the "dumps" directory, you will find hex dumps that are ready for being
+flashed into the PIC processor.
+
+yami-p.hex             contains the YAMI firmware.
+
+You also need one of these EEPROM dumps, depending on your requirements:
+
+yami-d-wheel.hex       AMIGA version, with mouse wheel support (use this
+                       one if you are in doubt)
+yami-d.hex             AMIGA version, without mouse wheel support
+yami-d-atari.hex       ATARI version, without mouse wheel support (Atari
+                       owners would positively want this one)
+
+Note that there is no EEPROM dump for Atari ST with wheel support. This is
+due to hardware limitations. Of the Atari ST, of course. ;-)
+
+If you want to flash your PIC from the source code, make sure to properly
+configure the EEPROM with the appropriate AMIGA/ATARI and WHEEL/NO WHEEL
+flags.
+
+
+USING YAMI
+==========
+
+Using YAMI is fairly easy.
+
+Connect your serial PC mouse (or a PS/2 mouse with the included serial
+adapter) to the SERIAL port of YAMI.
+
+Turn off your Amiga/Atari, then connect YAMI's MOUSE connector to the mouse
+port of your computer. Optionally, also plug the JOY connector to the
+joystick port of your Amiga.
+
+Now turn on your computer. The PC mouse should work right from the start.
+No drivers are required. At least unless you want to use the mouse wheel.
+
+For the mouse wheel, you need to install the "YamiCX" commodity. You can find
+the source code in the "yamiCX" directory, and a compiled binary in the
+AmiNet.
+
+Anyhow note that the mouse wheel is poorly supported by the Amiga. Only some
+MUI applications will actually make use of the mouse wheel.
+
+
+JOYSTICK MODE
+=============
+
+YAMI offers a special joystick mode. To use it, you will need a DB9 Y cable
+for each joystick. Connect the Y cable to the joystick port of your computer.
+On the one end of the Y cable, you connect the joystick, and on the other
+end you connect the appropriate YAMI port. You can also connect a second Y
+cable to the mouse port of your computer, in order to connect a second
+joystick.
+
+Now, if you want to use the joystick, just press on its fire button. YAMI
+will detect that, and will turn off its connector. You can start using the
+joystick now, without YAMI interfering.
+
+If you want to use the mouse again, just move it. YAMI will immediately
+resume its work.
+
+Please only use simple switched joysticks (like the good old Competition Pro).
+Do not use analog joysticks or other funny sticks. They might interfere with
+YAMI if you use the mouse, and they might even damage YAMI!
+
+
+F A Q
+=====
+
+? Can I purchase an assembled and ready-to-use YAMI from you?
+! Unfortunately not. I have already sold the last stock of YAMI a couple
+  of years ago. I don't have any PCBs left, nor do I have the time to
+  resume the YAMI production.
+
+? I have no way to flash a PIC processor. Can I purchase a preprogrammed PIC
+  processor from you?
+! Maybe. It's difficult for me too, because I don't own a professional PIC
+  programmer. If you have absolutely no other way to flash the PIC processor,
+  please get in contact with me.
+
+? Can I use a USB mouse?
+! No, you cannot. YAMI only supports mice with a serial interface.
+
+? Can I use a PS/2 mouse?
+! Probably. If there was a PS/2 to Serial adapter included with the mouse,
+  you can use the mouse with YAMI.
+
+? I have accidentally connected my Amiga mouse to the YAMI mouse port.
+! Bad news: the mouse is most likely dead now.
+
+? I have bought a YAMI interface from you in the good old times. Are there
+  updates available?
+! If you have received it in November 2000 or later, you already have the
+  latest firmware. If you have an earlier model, you can send it in for a
+  free update. You only have to cover the costs for shipping. Please get in
+  contact with me for further details.
+
+
+DISCLAIMER
+==========
+
+I am myself using my YAMI interface for a decade now. It proved to be very
+reliable, and a good companion to my Amiga. There were also a number of YAMI
+interfaces sold in the past, and I never received a compaint. So I am very
+confident that the design of YAMI is safe.
+
+Anyhow please be aware that this hardware has the potential to damage your
+good old vintage computer, especially if you use a fancy mouse, or if you
+make a mistake building the hardware or flashing the firmware.
+
+You got the YAMI schematics, source codes and binaries free of charge. It's
+a gift, and it's even licensed under GPLv3 now. It's meant as a favor for all
+the Amiga and Atari lovers out there.
+
+You use all this information as is, on your own risk and without any
+guarantees expressed or implied.
+
+If you are afraid of damaging your computer, please do not assemble the
+YAMI hardware.
+
+If you do not exactly know how to read the schematics, purchase the required
+components, build the hardware and flash the firmware, please ask someone who
+does know.
+
+

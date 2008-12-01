@@ -1,0 +1,22 @@
+PART LIST
+YAMI - YET ANOTHER MOUSE INTERFACE
+
+
+CONN1	DB9 male
+CONN2	DB9 female
+CONN3	DB9 female
+
+R1	20k
+R2	1k
+
+Z1	BAT43
+
+U1	PIC16F84-04P   (preferred, replacement: PIC16C84-04P)
+U2	ICL7660
+
+C1	10µF 16V
+C2	10µF 16V
+
+X1	Quartz 4MHz
+
+
