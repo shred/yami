@@ -1,7 +1,7 @@
 
 # YAMI - Yet Another Mouse Interface
 
-<img style="float: right;" src="yami.jpg">
+<img src="yami.jpg" width="320px" alt="YAMI" />
 
 YAMI is a mouse interface that enables serial PC mice to be used on AMIGA or ATARI ST computers.
 
