@@ -9,14 +9,14 @@ YAMI is released under [GPL v3](http://www.gnu.org/licenses/gpl.html).
 
 ## Features
 
-* Allows to connect a serial PC mouse to the Amiga mouse connector.
+* Allows to connect a serial PC mouse to the Amiga or Atari ST mouse connector.
 * Supports Logitech and Microsoft protocol.
 * Supports up to three mouse buttons.
-* Hardware support for the mouse wheel (both X and Y axis). Requires software with mouse wheel support.
+* Hardware support for the mouse wheel (both X and Y axis). Amiga only, requires software with mouse wheel support.
 * Joystick mode: Joysticks can be parallel connected (using a Y cable).
 * No drivers required for standard mouse operation. Mouse is available even in games, demos and the boot menu.
 * Matured firmware that proved its reliability over years.
-* Made of cheap components that are easy to get at electronic stores.
+* Made of cheap components that are easy to get at electronic stores. All chips are available in DIP packages, no SMD soldering required.
 * Schematics and Source Code available at [GitHub](https://github.com/shred/yami).
 
 ## Important!
@@ -43,22 +43,28 @@ Check everything at least twice and then once more, before you connect YAMI for 
 
 ## Flashing YAMI to the PIC processor
 
-The most difficult task is to flash the PIC processor. Maybe you know someone who has a programmer, but there are also construction manuals for cheap DIY programmers in the interwebs.
+There are two ways to flash the YAMI firmware to the PIC processor: You can either program the PIC before, or you can in-circuit program the PIC after assembling the YAMI hardware. In any case, you need a PIC programmer (e.g. PICkit).
+
+For in-circuit programming with a PICkit you just need a spare DB9 male and female connector, and a few wires. They need to be connected like this:
+
+ * PICkit Pin 1 (/MCLR) is connected to Pin 4 of the female DB9 connector
+ * PICkit Pin 2 (VDD) is connected to Pin 7 of the male DB9 connector
+ * PICkit Pin 3 (GND) is connected to Pin 8 of the male DB9 connector
+ * PICkit Pin 4 (PGD) is connected to Pin 2 of the male DB9 connector
+ * PICkit Pin 5 (PGC) is connected to Pin 1 of the male DB9 connector
+
+This adapter is connected to the PICkit, the female connector is connected to YAMI's "Serial" port, and the male connector is connected to YAMI's "Mouse" port. Make sure the adapter is properly connected before plugging it in.
+
+Configure the MPLAB IPE to power the target circuit with 5 Volts. Also turn off the "Erase All before program" option in the settings menu.
 
 In the "dumps" directory, you will find hex dumps that are ready for being flashed into the PIC processor.
 
-* `yami-p.hex` - contains the YAMI firmware (this one is mandatory)
-
-You also need *one* of these EEPROM dumps, depending on your requirements:
-
-In the "dumps" directory, you will find hex dumps that are ready for being flashed into the PIC processor.
-
-* `yami.hex` - contains the YAMI firmware (this one is mandatory)
+* `yami.hex` - contains the YAMI firmware.
 
 You also need to flash *one* of these EEPROM dumps, depending on your needs:
 
-* `yami-eeprom-amiga.hex` - AMIGA version (with mouse wheel support)
-* `yami-eeprom-atari.hex` - ATARI ST version (without mouse wheel support)
+* `yami-eeprom-amiga.hex` - AMIGA version
+* `yami-eeprom-atari.hex` - ATARI ST version
 
 ## Using YAMI
 
@@ -74,6 +80,8 @@ Now turn on your computer. The PC mouse should work right from the start. No dri
 For the mouse wheel, you need to install the "YamiCX" commodity. You can find the source code in the "yamiCX" directory, and a compiled binary on [AmiNet](http://aminet.net/package/util/mouse/yamiCX).
 
 Please do not expect the mouse wheel comfort of modern computers. AmigaOS was never designed for it, so only a few applications actually make use of it.
+
+The Atari ST does not support mouse wheels, due to hardware limitations.
 
 ## Joystick Mode
 
@@ -102,13 +110,13 @@ gpasm yami-eeprom-atari.asm
 
   Unfortunately not. I have already sold the last stock of YAMI many years ago. I also don't have any PCBs left.
 
-* _I have no way to flash a PIC processor. Can I purchase a preprogrammed PIC processor from you?_
+* _What happens if I accidentally use the Atari ST version on an Amiga (or vice versa)?_
 
-  Sadly no, as I also don't have a PIC programmer any more.
+  Mouse movements will be uncontrollable, but besides that, it won't damage your hardware.
 
-* _What happens if I use the Atari ST version on an Amiga (or vice versa)?_
+* _The Mouse Wheel is not working properly on my Amiga. Why?_
 
-  The mouse will behave erratic when moved, but it won't damage your hardware.
+  Make sure you have _YamiCX_ installed and running. It converts mouse wheel movements to the proper system events. Also keep in mind that AmigaOS has never been designed for mouse wheels. Only a few programs make actual use for it.
 
 * _Is there also a keyboard interface?_
 
@@ -124,4 +132,4 @@ You got the YAMI schematics, source codes and binaries free of charge. It's a gi
 
 You use all this information as is, on your own risk and without any guarantees expressed or implied.
 
-If you do not exactly know how to read the schematics, purchase the required components, build the hardware and flash the firmware, please ask someone who does know.
+If you do not exactly know how to read the schematics, purchase the required components, build the hardware and flash the firmware, please ask someone who does.
