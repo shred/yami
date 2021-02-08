@@ -51,15 +51,14 @@ In the "dumps" directory, you will find hex dumps that are ready for being flash
 
 You also need *one* of these EEPROM dumps, depending on your requirements:
 
-* `yami-d-wheel.hex` - AMIGA version, with mouse wheel support (use this one if you are in doubt)
-* `yami-d.hex` - AMIGA version, without mouse wheel support (whatever it would be good for)
-* `yami-d-atari.hex` - ATARI ST version, without mouse wheel support (Atari owners would positively want this one)
+In the "dumps" directory, you will find hex dumps that are ready for being flashed into the PIC processor.
 
-Note that there is no EEPROM dump for Atari ST with wheel support. Of course, this is due to hardware limitations of the Atari ST. ;-)
+* `yami.hex` - contains the YAMI firmware (this one is mandatory)
 
-If you want to flash your PIC from the source code, make sure to properly configure the EEPROM with the appropriate AMIGA/ATARI and WHEEL/NO WHEEL flags.
+You also need to flash *one* of these EEPROM dumps, depending on your needs:
 
-By the way: YAMI is designed to be in-circuit programmable and updateable. I had built a special programmer that was connected to the Amiga's floppy port, and to both ports of YAMI. Maybe you'll find out how I did the trick.
+* `yami-eeprom-amiga.hex` - AMIGA version (with mouse wheel support)
+* `yami-eeprom-atari.hex` - ATARI ST version (without mouse wheel support)
 
 ## Using YAMI
 
@@ -85,6 +84,17 @@ Now, if you want to use the joystick, just press on its fire button. YAMI will d
 If you want to use the mouse again, just move it. YAMI will immediately resume its work.
 
 Please only use simple switched joysticks (like the good old _Competition Pro_). Do not use analog joysticks or other funny sticks. They might interfere with YAMI if you use the mouse, and they might even damage YAMI!
+
+## Building YAMI from Source
+
+The source code can be assembled using [GPUtils](https://gputils.sourceforge.io). Assembling the source files is easy:
+
+```
+cd source
+gpasm yami.asm
+gpasm yami-eeprom-amiga.asm
+gpasm yami-eeprom-atari.asm
+```
 
 ## FAQ
 

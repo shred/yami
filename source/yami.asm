@@ -4,8 +4,8 @@
 ;*                                                                      *
 ;************************************************************************
 ;*
-;*      (C) 1998-2001 Richard Koerber
-;*               http://www.shredzone.de
+;*      (C) 1998-2021 Richard Koerber
+;*               https://yami.shredzone.org
 ;*
 ;************************************************************************
 ;       This driver supports microsoft, mouse system and logitech PC
@@ -41,33 +41,17 @@
 ;
 ;------------------------------------------------------------------------
 
-		LIST    p=16C84, r=dec
+		TITLE	"YAMI - Yet Another Mouse Interface"
+		PROCESSOR 16f84
+		RADIX	dec
 
-		DEVICE  XT_OSC, WDT_ON, PROTECT_OFF, PUT_ON     ; only PICAsm
+		CONFIG	FOSC = XT
+		CONFIG	WDTE = ON
+		CONFIG	CP = OFF
+		CONFIG	PWRTE = ON
 
-
-VER             =       4                       ;Version
-REV             =       2                       ;Revision
-
-INDF            =       0x00                    ; INDirect Function
-TMR0            =       0x01                    ; TMR0
-STATUS          =       0x03                    ; STATUS register
-FSR             =       0x04                    ; Indirect address pointer
-PORTA           =       0x05                    ; PORT A
-PORTB           =       0x06                    ; PORT B
-EEDATA          =       0x08                    ; EEDATA
-EEADR           =       0x09                    ; EEADR
-OPTION          =       0x01                    ; OPTION (81)
-TRISA           =       0x05                    ; TRIS A (85)
-TRISB           =       0x06                    ; TRIS B (86)
-EECON1          =       0x08                    ; EECON1 (88)
-EECON2          =       0x09                    ; EECON2 (89)
-
-RD              =       0
-WR              =       1
-WREN            =       2
-WRERR           =       3
-EEIF            =       4
+		INCLUDE <p16f84.inc>
+		INCLUDE "yami-version.inc"
 
 		CBLOCK 0x10
 		  loopcnt                       ;loop counter
@@ -132,30 +116,14 @@ EEIF            =       4
 #define ATARI_WV   portabuf,4                   ;Wheel Vertical Pulses
 #define ATARI_WVQ  portabuf,3                   ;Wheel Vertical Quadrature Pulses
 
-
-#define c       STATUS,0                        ;Carry Flag
-#define z       STATUS,2                        ;Zero Flag
-#define RP0     STATUS,5                        ;Register Page 0
-
-
-
-;****************************************************************
-;*      EEPROM data start here
-;*
-		EORG    0x00
-ee_flags        de      0x02                    ;(@0x00)
-		; 0x00: Atari, No Wheel
-		; 0x01: Amiga, No Wheel
-		; 0x03: Amiga, Wheel
-
-		EORG    0x3E
-		de      VER,REV                 ;Version and Revision
+ee_flags        EQU     0x2100                  ;Configuration flags in EEPROM
 
 
 ;****************************************************************
 ;*      The program starts here, with register initialisation
 ;*
-		ORG     0x000
+		ORG     0x0000
+		ASSUME  0                       ;We take care for bank switching
 
 run             clrf    xcntr                   ;Clear the counters
 		clrf    ycntr
@@ -167,11 +135,11 @@ run             clrf    xcntr                   ;Clear the counters
 		movwf   portbuf
 		clrwdt                          ;Clear watchdog and prescaler
 	;-- Initialize the hardware ------------;
-		bsf     RP0                     ;Register Bank 1
+		bsf     STATUS,RP0              ;Register Bank 1
 		movlw   B'10000111'             ;No weak pull up
-		movwf   OPTION                  ;  prescaler rate 1:256
-		bcf     RP0                     ;Back to Register Bank 0
-		movlw   0x80+TRISB              ;prepare indirect adressing
+		movwf   OPTION_REG & 0x7F       ;  prescaler rate 1:256
+		bcf     STATUS,RP0              ;Back to Register Bank 0
+		movlw   TRISB                   ;prepare indirect adressing
 		movwf   FSR                     ;  of TRISB register
 	;-- Initialize the ports ---------------;
 		movf    portbuf,w               ;Initialize PORT B
@@ -189,11 +157,11 @@ run             clrf    xcntr                   ;Clear the counters
 		movwf   busycnt                 ;  be skipped by this wait
 iwait1          clrwdt                          ;Clear watchdog
 		movf    TMR0,w                  ;Get timer 0
-		btfss   z                       ;  wait until zero
+		btfss   STATUS,Z                ;  wait until zero
 		goto    iwait1                  ;  if not zero -> keep on waiting
 iwait2          clrwdt                          ;Clear watchdog
 		movf    TMR0,w                  ;Get timer 0
-		btfsc   z                       ;  wait until not zero
+		btfsc   STATUS,Z                ;  wait until not zero
 		goto    iwait2
 		decfsz  busycnt,f               ;Next loop
 		goto    iwait1
@@ -212,7 +180,7 @@ reentry         clrwdt                          ;Clear watchdog
 		goto    synchronize
 		movf    serbuf,w
 		andlw   B'00111000'             ;bit 5-3 must be 0 for mouse synch
-		btfss   z
+		btfss   STATUS,Z
 		goto    synchronize             ;nope: try next byte
 		; PC continues here if Mouse System detected !
 
@@ -347,7 +315,7 @@ xlimdone:       movwf   xposn
 no_mmb
 		movf    serbuf,w                ;Get wheel movement
 		andlw   B'00001111'             ;  only bit 0~3 required
-		btfsc   z
+		btfsc   STATUS,Z
 		goto    synchronize             ;  if zero -> synchronize
 
 		btfsc   serbuf,3                ;Sign extend the nibble to byte
@@ -410,9 +378,9 @@ r_loop          call    waitquad                ;  and generate quad pulses
 ;                clrwdt                          ;<- BITNOP
 		decfsz  loopcnt,f
 		goto    r_loop
-		bcf     c                       ;move RXD into c
+		bcf     STATUS,C                ;move RXD into c
 		btfss   RXD                     ; and invert it (RS232->TTL)
-		bsf     c
+		bsf     STATUS,C
 		rrf     serbuf,f                ;rotate c in serbuf
 		decfsz  bitcnt,f                ;do it with all 8 bytes
 		goto    i_loop                  ;10 inst cycles each loop
@@ -440,19 +408,19 @@ waitquad        btfsc   PULSEMODE               ;  0    What mode?
 	;-- Prefer pulse mode ------------------;
 		bsf     PULSEMODE               ;  3    Wheel preferred next time...
 		movf    mcntr,w                 ;       read the mouse move counter
-		btfss   z                       ;         <> 0 ?
+		btfss   STATUS,Z                ;         <> 0 ?
 		goto    do_mousequad2           ;         yes: do one mouse quad pulse
 		movf    mcntr2,w                ;  7    read the wheel move counter
-		btfss   z                       ;         <> 0 ?
+		btfss   STATUS,Z                ;         <> 0 ?
 		goto    do_wheelquad            ;         yes: do one wheel quad pulse
 		goto    do_wastetime            ; 10    else waste time
 	;-- Prefer wheel mode ------------------;
 prefer_wheel    bcf     PULSEMODE               ;  3    Mouse preferred next time...
 		movf    mcntr2,w                ;       read the wheel move counter
-		btfss   z                       ;         <> 0 ?
+		btfss   STATUS,Z                ;         <> 0 ?
 		goto    do_wheelquad2           ;         yes: do one wheel quad pulse
 		movf    mcntr,w                 ;  7    read the mouse move counter
-		btfss   z                       ;         <> 0 ?
+		btfss   STATUS,Z                ;         <> 0 ?
 		goto    do_mousequad            ;         yes: do one mouse quad pulse
 		goto    do_wastetime            ; 10    else waste time
 
@@ -512,7 +480,7 @@ mousequad       decf    mcntr,f                 ;  decrement the counter
 	;   44 instruction cycles -exactly- in -any- case (return inclusive)
 	;-- Check the X axis -------------------;
 x_axis          movf    xposn,w                 ;fetch desired X position
-		btfsc   z                       ;  = 0 ?
+		btfsc   STATUS,Z                ;  = 0 ?
 		goto    x_axis_4                ;  no X move, just wait
 		addwf   xcntr,f                 ;add to the X counter (signed)
 		btfsc   xposn,7                 ;check direction
@@ -568,7 +536,7 @@ x_axis_18       nop                             ;18 cycles
 x_axis_19
 	;-- Check the Y axis -------------------;
 y_axis          movf    yposn,w                 ;fetch desired Y position
-		btfsc   z                       ;  = 0 ?
+		btfsc   STATUS,Z                ;  = 0 ?
 		goto    y_axis_4                ;  no Y move, just wait
 		addwf   ycntr,f                 ;add to the Y counter (signed)
 		btfsc   yposn,7                 ;check direction
@@ -630,7 +598,7 @@ y_axis_19       goto    wq_update
 atari_mode      nop                             ; waste one cycle to catch up
 	;-- Check the X axis -------------------;
 a_x_axis        movf    xposn,w                 ;fetch desired X position
-		btfsc   z                       ;  = 0 ?
+		btfsc   STATUS,Z                ;  = 0 ?
 		goto    a_x_axis_4              ;  no X move, just wait
 		addwf   xcntr,f                 ;add to the X counter (signed)
 		btfsc   xposn,7                 ;check direction
@@ -686,7 +654,7 @@ a_x_axis_18     clrwdt                          ;18 cycles
 a_x_axis_19
 	;-- Check the Y axis -------------------;
 a_y_axis        movf    yposn,w                 ;fetch desired Y position
-		btfsc   z                       ;  = 0 ?
+		btfsc   STATUS,Z                ;  = 0 ?
 		goto    a_y_axis_4              ;  no Y move, just wait
 		addwf   ycntr,f                 ;add to the Y counter (signed)
 		btfsc   yposn,7                 ;check direction
@@ -782,7 +750,7 @@ wheelquad       decf    mcntr2,f                ;  decrement the counter
 	;   46 instruction cycles -exactly- in -any- case (return inclusive)
 	;-- Check the X axis -------------------;
 wh_x_axis       movf    xposn2,w                ;fetch desired X position
-		btfsc   z                       ;  = 0 ?
+		btfsc   STATUS,Z                ;  = 0 ?
 		goto    wh_x_axis_4             ;  no X move, just wait
 		addwf   xcntr2,f                ;add to the X counter (signed)
 		btfsc   xposn2,7                ;check direction
@@ -838,7 +806,7 @@ wh_x_axis_18    nop                             ;18 cycles
 wh_x_axis_19
 	;-- Check the Y axis -------------------;
 wh_y_axis       movf    yposn2,w                ;fetch desired Y position
-		btfsc   z                       ;  = 0 ?
+		btfsc   STATUS,Z                ;  = 0 ?
 		goto    wh_y_axis_4             ;  no Y move, just wait
 		addwf   ycntr2,f                ;add to the Y counter (signed)
 		btfsc   yposn2,7                ;check direction
@@ -900,7 +868,7 @@ wh_y_axis_19    goto    wh_wq_update
 wh_atari_mode   nop                             ; waste one cycle to catch up
 	;-- Check the X axis -------------------;
 wh_a_x_axis     movf    xposn2,w                ;fetch desired X position
-		btfsc   z                       ;  = 0 ?
+		btfsc   STATUS,Z                ;  = 0 ?
 		goto    wh_a_x_axis_4           ;  no X move, just wait
 		addwf   xcntr2,f                ;add to the X counter (signed)
 		btfsc   xposn2,7                ;check direction
@@ -956,7 +924,7 @@ wh_a_x_axis_18  clrwdt                          ;18 cycles
 wh_a_x_axis_19
 	;-- Check the Y axis -------------------;
 wh_a_y_axis     movf    yposn2,w                ;fetch desired Y position
-		btfsc   z                       ;  = 0 ?
+		btfsc   STATUS,Z                ;  = 0 ?
 		goto    wh_a_y_axis_4           ;  no Y move, just wait
 		addwf   ycntr2,f                ;add to the Y counter (signed)
 		btfsc   yposn2,7                ;check direction
@@ -1073,17 +1041,12 @@ joy_wheel       btfss   w_b                     ;Wheel MB in tristate?
 ;*        <- W  Data
 ;*
 read_eeprom     movwf   EEADR                   ;write address
-		bsf     RP0
-		bsf     EECON1,RD               ;trigger reading
-		bcf     RP0
+		bsf     STATUS,RP0
+		bsf     EECON1 & 0x7F,RD        ;trigger reading
+		bcf     STATUS,RP0
 		movf    EEDATA,w                ;get data
 		return
 
-
-
 		END
 
-
-
 ;****************************************************************
-

@@ -1,34 +1,31 @@
-V1.0 (1998-01-03)
-  - First version, proof of concept
 
-V2.0 (1998-01-26)
-  - Rewrote most parts of source code
-  - Implemented Logitech format extension
-  - Improved 7 bit handling, auto-resynchronisation
-  - Some cleanups and optimizations
+V4.4 (2021-02-08)
+  - Migrated from picasm to GPUtils. The code itself is unchanged.
 
-V2.1 (1998-01-30)
-  - Some more optimizations
+V4.3 (2000-11-02)
+  - Bugfix: some Logitech cordless mice send an unstable bit
+    8, which caused YAMI to resynchronize too often.
 
-V2.2 (1998-02-03)
-  - Improved mouse format recognition
-  - Replaced all code from the proof of concept
+V4.2 (1999-11-29)
+  - Bugfix: fixed the "shiver on LMB" bug. It was caused by
+    timing problems with the PIC's prefetch queue
 
-V2.3 (1998-02-08)
-  - Large mouse moves let the mouse pointer move in waves. This
-    effect has been removed, by generating quadrature pulses
-    using sort of a Bresenham algorithm.
-  - Made the source code more MPASM compilant
+V4.1 (1999-09-05)
+  - Bugfix: wheel moves were not sign extended
 
-V3.0 (1998-02-18)
-  - Made the code run on a PIC-16C84 with only 4MHz clock
+V4.0 (1999-09-04)
+  - Added hardware mouse wheel support via the Joystick port
+  - Overall major code optimizations
 
-V3.1 (1998-02-20)
-  - MouseMan/Intellimouse supported
+V3.6 (1999-08-30)
+  - Improved timing, so the mouse will move smoother
 
-V3.2 (1998-02-21)
-  - Outputs are now driven as Low/Tristate, to protect the
-    hardware against short circuit
+V3.5 (1999-06-24)
+  - Implemented Atari mode: HQ and V is swapped. MMB is disabled.
+  - Atari mode is selected by pulling pin 3 low (V3 only!).
+
+V3.4 (1998-02-25)
+  - Wheel speed read from EEPROM table now
 
 V3.3 (1998-02-25)
   - Bugfix: forgot to turn off weak pullup of port B
@@ -39,28 +36,34 @@ V3.3 (1998-02-25)
   - Logarithmic wheel movement
   - First public release
 
-V3.4 (1998-02-25)
-  - Wheel speed read from EEPROM table now
+V3.2 (1998-02-21)
+  - Outputs are now driven as Low/Tristate, to protect the
+    hardware against short circuit
 
-V3.5 (1999-06-24)
-  - Implemented Atari mode: HQ and V is swapped. MMB is disabled.
-  - Atari mode is selected by pulling pin 3 low.
+V3.1 (1998-02-20)
+  - MouseMan/Intellimouse supported
 
-V3.6 (1999-08-30)
-  - Improved timing, so the mouse will move smoother
+V3.0 (1998-02-18)
+  - Made the code run on a PIC-16C84 with only 4MHz clock
 
-V4.0 (1999-09-04)
-  - Added hardware mouse wheel support via the Joystick port
-  - Overall major code optimizations
+V2.3 (1998-02-08)
+  - Large mouse moves let the mouse pointer move in waves. This
+    effect has been removed, by generating quadrature pulses
+    using sort of a Bresenham algorithm.
+  - Made the source code more MPASM compliant
 
-V4.1 (1999-09-05)
-  - Bugfix: wheel moves were not sign extended
+V2.2 (1998-02-03)
+  - Improved mouse format recognition
+  - Replaced all code from the proof of concept
 
-V4.2 (1999-11-29)
-  - Bugfix: fixed the "shiver on LMB" bug. It was caused by
-    timing problems with the PIC's prefetch queue
+V2.1 (1998-01-30)
+  - Some more optimizations
 
-V4.3 (2000-11-02)
-  - Bugfix: some Logitech cordless mice send an unstable bit
-    8, which caused YAMI to resynchronize too often.
+V2.0 (1998-01-26)
+  - Rewrote most parts of source code
+  - Implemented Logitech format extension
+  - Improved 7 bit handling, auto-resynchronisation
+  - Some cleanups and optimizations
 
+V1.0 (1998-01-03)
+  - First version, proof of concept
