@@ -17,7 +17,7 @@ YAMI is released under [GPL v3](http://www.gnu.org/licenses/gpl.html).
 * No drivers required for standard mouse operation. Mouse is available even in games, demos and the boot menu.
 * Matured firmware that proved its reliability over years.
 * Made of cheap components that are easy to get at electronic stores. All chips are available in DIP packages, no SMD soldering required.
-* Schematics and Source Code available at [GitHub](https://github.com/shred/yami).
+* Schematics and Source Code available at [Codeberg](https://codeberg.org/shred/yami).
 
 ## Important!
 
